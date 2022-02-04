@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ryanl\\source\\repos\\InvApiServices\\InvApiServices\\InvApiServices.csproj": {}
+    "C:\\Users\\ryanl\\OneDrive\\Pictures\\Documents\\GitHub\\InvApiServices\\InvApiServices\\InvApiServices\\InvApiServices.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ryanl\\source\\repos\\InvApiServices\\InvApiServices\\InvApiServices.csproj": {
+    "C:\\Users\\ryanl\\OneDrive\\Pictures\\Documents\\GitHub\\InvApiServices\\InvApiServices\\InvApiServices\\InvApiServices.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ryanl\\source\\repos\\InvApiServices\\InvApiServices\\InvApiServices.csproj",
+        "projectUniqueName": "C:\\Users\\ryanl\\OneDrive\\Pictures\\Documents\\GitHub\\InvApiServices\\InvApiServices\\InvApiServices\\InvApiServices.csproj",
         "projectName": "InvApiServices",
-        "projectPath": "C:\\Users\\ryanl\\source\\repos\\InvApiServices\\InvApiServices\\InvApiServices.csproj",
+        "projectPath": "C:\\Users\\ryanl\\OneDrive\\Pictures\\Documents\\GitHub\\InvApiServices\\InvApiServices\\InvApiServices\\InvApiServices.csproj",
         "packagesPath": "C:\\Users\\ryanl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ryanl\\source\\repos\\InvApiServices\\InvApiServices\\obj\\",
+        "outputPath": "C:\\Users\\ryanl\\OneDrive\\Pictures\\Documents\\GitHub\\InvApiServices\\InvApiServices\\InvApiServices\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -45,6 +45,22 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[5.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.13, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
