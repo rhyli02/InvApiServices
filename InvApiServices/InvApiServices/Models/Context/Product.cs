@@ -35,5 +35,6 @@ namespace InvApiServices.Models.Context
         public DateTime CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime LastDateUpdated { get; set; }
+        public string ClientAccount { get; set; }
     }
 }

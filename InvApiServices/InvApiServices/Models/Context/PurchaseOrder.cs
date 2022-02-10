@@ -28,6 +28,6 @@ namespace InvApiServices.Models.Context
         [Required]
         public string Status { get; set; }
         public string Notes { get; set; }
-
+        public string ClientAccount { get; set; }
     }
 }

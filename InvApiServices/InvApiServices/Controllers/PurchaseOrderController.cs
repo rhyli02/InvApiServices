@@ -10,8 +10,9 @@ namespace InvApiServices.Controllers
     public class PurchaseOrderController : Controller
     {
         // GET: PurchaseOrderController
-        public ActionResult Index()
+        public ActionResult GetAllPO()
         {
+
             return View();
         }
 

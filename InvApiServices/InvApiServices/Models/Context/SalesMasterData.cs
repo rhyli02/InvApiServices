@@ -30,5 +30,6 @@ namespace InvApiServices.Models.Context
         public DateTime TransactionDate { get; set; }
 
         public string Notes { get; set; }
+        public string ClientAccount { get; set; }
     }
 }

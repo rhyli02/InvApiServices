@@ -19,5 +19,6 @@ namespace InvApiServices.Models.Context
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
         public string Status { get; set; }
+        public string ClientAccount { get; set; }
     }
 }

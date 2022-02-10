@@ -17,5 +17,6 @@ namespace InvApiServices.Models.Context
         public int ApprovalLevel { get; set; }
         public string Status { get; set; }
         public string ApprovalType { get; set; }
+        public string ClientAccount { get; set; }
     }
 }

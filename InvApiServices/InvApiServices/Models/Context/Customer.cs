@@ -23,5 +23,7 @@ namespace InvApiServices.Models.Context
         public bool Status { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
+
+        public string ClientAccount { get; set; }
     }
 }

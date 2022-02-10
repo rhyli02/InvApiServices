@@ -10,5 +10,6 @@ namespace InvApiServices.Models.Context
         public int Id { get; set; }
         public string Shipment { get; set; }
         public bool Status { get; set; }
+        public string ClientAccount { get; set; }
     }
 }

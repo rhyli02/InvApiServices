@@ -18,8 +18,6 @@ namespace InvApiServices.Services
             _repo = repo;
         }
 
-       
-
         public async Task<IEnumerable<POViewModel>> GetAllPO()
         {
             try
@@ -135,7 +133,7 @@ namespace InvApiServices.Services
                 }
 
                 return ordersVM;
-                -
+               
             }
             catch (Exception ex)
             {
@@ -144,18 +142,109 @@ namespace InvApiServices.Services
             }
         }
 
-        public Task<bool> Save(POViewModel order)
+        public async Task<bool> Save(POViewModel order)
         {
-            throw new NotImplementedException();
+            try
+            {
+                bool response = false;
+                var res = MapVMtoPO(order);
+                response = await _repo.Save(res);
+                if (response)
+                {
+                    foreach (var item in order.OrderItems)
+                    {
+                        var orderitem = MapVmToOrderItem(item);
+                        response = await _repo.SaveItem(orderitem);
+                        if (!response) return response;
+                    }
+                }
+
+                return response;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public Task<bool> Update(POViewModel order)
+        public async Task<bool> Update(POViewModel order)
         {
-            throw new NotImplementedException();
+            try
+            {
+                bool response = false;
+                var po = await _repo.GetPOByOrderId(order.OrderId);
+                
+                po.CategoryId = order.CategoryId;
+                po.SupplierId = order.SupplierId;
+                po.Date = order.Date;
+                po.Terms = order.Terms;
+                po.Shipment = order.Shipment;
+                po.Currency = order.Currency;
+                po.SubTotal = order.SubTotal;
+                po.Vat = order.Vat;
+                po.GrandTotal = order.GrandTotal;
+                po.Status = order.Status;
+                po.Notes = order.Notes;
+
+                response = await _repo.Update(po);
+
+                var orderItemList = await _repo.GetOrderItemByOrderId(order.OrderId);
+                foreach (var item in order.OrderItems)
+                {
+                    if (item.Id >= 1)
+                    {
+                        var oi = await _repo.GetOrderItemByOrderItemId(item.Id);
+                        oi.OrderId = item.OrderId;
+                        oi.ProductId = item.ProductId;
+                        oi.Qty = item.Qty;
+                        oi.OrderUnit = item.OrderUnit;
+                        oi.Discount = item.Discount;
+                        oi.Amount = item.Amount;
+                        oi.Date = item.Date;
+                        oi.CreatedBy = item.CreatedBy;
+
+                        response = await _repo.UpdateItem(oi);
+                    }
+                    else
+                    {
+                        var newoi = MapVmToOrderItem(item);
+                        response = await _repo.SaveItem(newoi);
+                    }
+                    if (!response) return response;
+
+                }
+
+                return response;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
-        public Task<bool> Delete(POViewModel order)
+        public async Task<bool> Delete(POViewModel order)
         {
-            throw new NotImplementedException();
+            try
+            {
+                bool response = false;
+                foreach (var item in order.OrderItems)
+                {
+                    var orderItem = await _repo.GetOrderItemByOrderItemId(item.Id);
+                    response = await _repo.DeleteItem(orderItem);
+                    if (!response) return response;
+                }
+                var po = await _repo.GetPOByOrderId(order.OrderId);
+                response = await _repo.Delete(po);
+
+                return response;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private OrderItemViewModel MapOrderItemtoVM(OrderItem orderItem)
@@ -212,6 +301,47 @@ namespace InvApiServices.Services
             }
 
         }
+
+        private PurchaseOrder MapVMtoPO(POViewModel collect)
+        {
+            var model = new PurchaseOrder
+            {
+                OrderId = collect.OrderId,
+                CategoryId = collect.CategoryId,
+                SupplierId = collect.SupplierId,
+                Date = collect.Date,
+                Terms = collect.Terms,
+                Shipment = collect.Shipment,
+                Currency = collect.Currency,
+                SubTotal = collect.SubTotal,
+                Vat = collect.Vat,
+                GrandTotal = collect.GrandTotal,
+                Status = collect.Status,
+                Notes = collect.Notes,
+               
+            };
+
+            return model;
+
+        }
+        private OrderItem MapVmToOrderItem(OrderItemViewModel order)
+        {
+
+            OrderItem orderItem = new OrderItem
+            {
+                OrderId = order.OrderId,
+                ProductId = order.ProductId,
+                Qty = order.Qty,
+                OrderUnit = order.OrderUnit,
+                Discount = order.Discount,
+                Amount = order.Amount,
+                Date = order.Date,
+                CreatedBy = order.CreatedBy
+            };
+
+            return orderItem;
+        }
+
 
 
     }

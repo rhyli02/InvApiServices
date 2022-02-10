@@ -20,5 +20,6 @@ namespace InvApiServices.Models.Context
         public string CreatedBy { get; set; }
         public bool Status { get; set; }
         public string AccessLevel { get; set; }
+        public string ClientAccount { get; set; }
     }
 }
