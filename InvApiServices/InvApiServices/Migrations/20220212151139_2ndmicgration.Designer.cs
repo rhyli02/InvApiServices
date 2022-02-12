@@ -3,14 +3,16 @@ using System;
 using InvApiServices.Models.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InvApiServices.Migrations
 {
     [DbContext(typeof(InvDBContext))]
-    partial class InvDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220212151139_2ndmicgration")]
+    partial class _2ndmicgration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

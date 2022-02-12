@@ -1,88 +1,135 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using InvApiServices.Models.Context;
+using InvApiServices.Models.ViewModel;
+using InvApiServices.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 namespace InvApiServices.Controllers
 {
-    public class PurchaseOrderController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PurchaseOrderController : ControllerBase
     {
-        // GET: PurchaseOrderController
-        public ActionResult GetAllPO()
-        {
+        private readonly IPurchaseOrderService _service;
 
-            return View();
+        public PurchaseOrderController(IPurchaseOrderService service)
+        {
+            _service = service;
         }
 
-        // GET: PurchaseOrderController/Details/5
-        public ActionResult Details(int id)
+        // GetAllPOByClientAccount: api/<PurchaseOrderController>
+        [HttpGet("{clientAcct}")]
+        public async Task<IEnumerable<POViewModel>> GetAllPOByClientAccount(string clientAcct)
         {
-            return View();
+            return await _service.GetAllPOByClient(clientAcct);
         }
 
-        // GET: PurchaseOrderController/Create
-        public ActionResult Create()
+        // GetPOByOrderId api/<PurchaseOrderController>/5
+        [HttpGet("{orderId}")]
+        public async Task<POViewModel> GetPOByOrderId(string orderId)
         {
-            return View();
+            return await _service.GetPOByOrderId(orderId);
         }
 
-        // POST: PurchaseOrderController/Create
+
+        // GET api status/<PurchaseOrderController>/5
+        [HttpGet("{status}/{clientAcct}")]
+        public async Task<IEnumerable<POViewModel>> GetPOByOrderId(string status, string clientAcct)
+        {
+            return await _service.GetPOByStatus(status, clientAcct);
+        }
+
+
+        [HttpGet("{dateFrom}/{dateTo}/{clientAcct}")]
+        public async Task<IEnumerable<POViewModel>> GetPOByOrderId(DateTime dateFrom, DateTime dateTo, string clientAcct)
+        {
+            return await _service.GetPOByDateRange(dateFrom, dateTo, clientAcct);
+        }
+        // POST api/<PurchaseOrderController>
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> AddPurchaseOrder(POViewModel  collect)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (collect == null)
+                    return BadRequest();
+
+                string orderId = _service.GenerateOrderId(collect.ClientAccount);
+                collect.OrderId = orderId;
+                bool isSaved = await _service.Save(collect);
+
+               
+                if (isSaved)
+                {
+                    var response = await _service.GetPOByOrderId(orderId);
+
+                    return CreatedAtAction(nameof(GetPOByOrderId),
+                new { orderId = response.OrderId }, response);
+                }else
+                {
+                    return StatusCode(StatusCodes.Status501NotImplemented,
+                  "Error - Record Not saved.");
+                }
+
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error creating new purchase order");
             }
         }
 
-        // GET: PurchaseOrderController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PurchaseOrderController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PurchaseOrderController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PurchaseOrderController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        // PUT api/<PurchaseOrderController>/5
+        [HttpPut]
+        public async Task<IActionResult> Put( POViewModel collect)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (collect == null)
+                    return BadRequest();
+
+                bool isSaved = await _service.Update(collect);
+                if (isSaved)
+                {
+                    var response = await _service.GetPOByOrderId(collect.OrderId);
+                    return CreatedAtAction(nameof(GetPOByOrderId),
+                             new { id = response.Id }, response);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status304NotModified,
+                  "Error - Update not Successful.");
+                }
+
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error Updating existing purchase order");
             }
+        }
+
+        // DELETE api/<PurchaseOrderController>/5
+        [HttpDelete("{orderId}")]
+        public async void Delete(string orderId)
+        {
+            try
+            {
+               
+                bool isSaved = await _service.Delete(orderId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
     }
 }

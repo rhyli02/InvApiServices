@@ -17,11 +17,12 @@ namespace InvApiServices.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<PurchaseOrder>> GetAllPO()
+        public async Task<IEnumerable<PurchaseOrder>> GetAllPOByClient(string clientAcct)
         {
             try
             {
                 return await (from item in _context.PurchaseOrders
+                              where item.ClientAccount.Equals(clientAcct)
                               select item).ToListAsync();
             }
             catch (Exception ex)
@@ -30,12 +31,12 @@ namespace InvApiServices.Repository
                 throw ex;
             }
         }
-        public async Task<IEnumerable<PurchaseOrder>> GetPOByDateRange(DateTime dateFrom, DateTime dateTo)
+        public async Task<IEnumerable<PurchaseOrder>> GetPOByDateRange(DateTime dateFrom, DateTime dateTo, string clientAcct)
         {
             try
             {
                 return await (from item in _context.PurchaseOrders
-                              where (item.Date >= dateFrom && item.Date <= dateTo)
+                              where (item.Date >= dateFrom && item.Date <= dateTo) && item.ClientAccount.Equals(clientAcct)
                               select item).ToListAsync();
             }
             catch (Exception ex)
@@ -60,12 +61,12 @@ namespace InvApiServices.Repository
             }
         }
 
-        public async Task<IEnumerable<PurchaseOrder>> GetPOByStatus(string status)
+        public async Task<IEnumerable<PurchaseOrder>> GetPOByStatus(string status, string clientAcct)
         {
             try
             {
                 return await(from item in _context.PurchaseOrders
-                             where item.Status.Equals(status)
+                             where item.Status.Equals(status) && item.ClientAccount.Equals(clientAcct)
                              select item).ToListAsync();
             }
             catch (Exception ex)

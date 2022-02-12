@@ -20,6 +20,7 @@ namespace InvApiServices.Models.ViewModel
         public decimal GrandTotal { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
+        public string ClientAccount { get; set; }
         public IEnumerable<OrderItemViewModel> OrderItems { get; set; }
     }
 }

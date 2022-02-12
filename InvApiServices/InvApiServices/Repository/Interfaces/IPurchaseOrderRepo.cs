@@ -10,13 +10,13 @@ namespace InvApiServices.Repository.Interfaces
     {
 
         
-        Task<IEnumerable<PurchaseOrder>> GetAllPO();
+        Task<IEnumerable<PurchaseOrder>> GetAllPOByClient(string clientAcct);
 
         Task<IEnumerable<PurchaseOrder>> GetPOBySupplier(int Id);
 
-        Task<IEnumerable<PurchaseOrder>> GetPOByStatus(string status);
+        Task<IEnumerable<PurchaseOrder>> GetPOByStatus(string status, string clientAcct);
 
-        Task<IEnumerable<PurchaseOrder>> GetPOByDateRange( DateTime dateFrom, DateTime dateTo);
+        Task<IEnumerable<PurchaseOrder>> GetPOByDateRange( DateTime dateFrom, DateTime dateTo, string clientAcct);
 
         Task<PurchaseOrder> GetPOByOrderId(string OrderId);
         Task<IEnumerable<OrderItem>> GetOrderItemByOrderId(string OrderId);

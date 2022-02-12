@@ -18,12 +18,12 @@ namespace InvApiServices.Services
             _repo = repo;
         }
 
-        public async Task<IEnumerable<POViewModel>> GetAllPO()
+        public async Task<IEnumerable<POViewModel>> GetAllPOByClient(string clientAcct)
         {
             try
             {
                 List<POViewModel> res = new List<POViewModel>();
-                var allPO =await _repo.GetAllPO();
+                var allPO =await _repo.GetAllPOByClient(clientAcct);
                 foreach (var item in allPO)
                 {
                     var orderitems = await _repo.GetOrderItemByOrderId(item.OrderId);
@@ -57,12 +57,12 @@ namespace InvApiServices.Services
 
         }
 
-        public async Task<IEnumerable<POViewModel>> GetPOByDateRange(DateTime dateFrom, DateTime dateTo)
+        public async Task<IEnumerable<POViewModel>> GetPOByDateRange(DateTime dateFrom, DateTime dateTo, string clientAcct)
         {
             try
             {
                 var ordersVM = new List<POViewModel>();
-                var orders =await _repo.GetPOByDateRange(dateFrom, dateTo);
+                var orders =await _repo.GetPOByDateRange(dateFrom, dateTo,clientAcct);
 
                 foreach (var item in orders)
                 {
@@ -96,12 +96,12 @@ namespace InvApiServices.Services
             }
         }
 
-        public async Task<IEnumerable<POViewModel>> GetPOByStatus(string status)
+        public async Task<IEnumerable<POViewModel>> GetPOByStatus(string status, string clientAcct)
         {
             try
             {
                 var ordersVM = new List<POViewModel>();
-                var orders = await _repo.GetPOByStatus(status);
+                var orders = await _repo.GetPOByStatus(status,clientAcct);
 
                 foreach (var item in orders)
                 {
@@ -153,6 +153,7 @@ namespace InvApiServices.Services
                 {
                     foreach (var item in order.OrderItems)
                     {
+                        item.OrderId = order.OrderId;
                         var orderitem = MapVmToOrderItem(item);
                         response = await _repo.SaveItem(orderitem);
                         if (!response) return response;
@@ -224,18 +225,18 @@ namespace InvApiServices.Services
                 throw;
             }
         }
-        public async Task<bool> Delete(POViewModel order)
+        public async Task<bool> Delete(string orderId)
         {
             try
             {
                 bool response = false;
-                foreach (var item in order.OrderItems)
-                {
-                    var orderItem = await _repo.GetOrderItemByOrderItemId(item.Id);
-                    response = await _repo.DeleteItem(orderItem);
+                var OrderItems = await _repo.GetOrderItemByOrderId(orderId);
+                foreach (var item in OrderItems)
+                {                  
+                    response = await _repo.DeleteItem(item);
                     if (!response) return response;
                 }
-                var po = await _repo.GetPOByOrderId(order.OrderId);
+                var po = await _repo.GetPOByOrderId(orderId);
                 response = await _repo.Delete(po);
 
                 return response;
@@ -286,7 +287,8 @@ namespace InvApiServices.Services
                     GrandTotal = order.GrandTotal,
                     Status = order.Status,
                     Notes = order.Notes,
-                    OrderItems = orderItemsVM
+                    OrderItems = orderItemsVM,
+                    ClientAccount = order.ClientAccount
                 };
 
 
@@ -318,6 +320,7 @@ namespace InvApiServices.Services
                 GrandTotal = collect.GrandTotal,
                 Status = collect.Status,
                 Notes = collect.Notes,
+                ClientAccount =collect.ClientAccount
                
             };
 
@@ -342,7 +345,10 @@ namespace InvApiServices.Services
             return orderItem;
         }
 
-
-
+        public string GenerateOrderId(string ClientAccount)
+        {
+            string orderId= ClientAccount + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + Guid.NewGuid().ToString().Substring(0, 3);
+            return orderId;
+        }
     }
 }
